@@ -12,6 +12,19 @@ python3 -m http.server 8000
 
 Luego abre <http://localhost:8000/>. Usa un servidor: desde `file://` el navegador bloquea la precarga de las fuentes y `404.html` y las páginas legales no encuentran sus archivos.
 
+## Pruebas
+
+```sh
+node tests/logica.test.js   # cálculo del crédito y enlaces para compartir (solo Node)
+node tests/ui.test.js       # la página en Chromium, en escritorio y celular (Playwright)
+```
+
+El cálculo vive en el bloque `<script id="logica">` de `index.html`, separado del código que pinta la página; `tests/logica.test.js` lee ese bloque y lo ejecuta tal cual. Si cambias un cálculo a propósito, actualiza los valores de referencia de las pruebas. Corre las dos antes de publicar.
+
+## Enlaces para compartir
+
+"Copiar enlace" (en celular, "Compartir") arma una dirección como `https://sepagasola.com/#precio=2500000&fin=cofinavit`, que solo lleva los valores distintos al ejemplo. Van después del `#` para que no lleguen al servidor. Quien lo abre ve ese escenario sin perder el suyo guardado, hasta que cambie algo. Si agregas un campo al simulador, añádelo a `DEFAULTS` y a `NUM_KEYS` o `ENUMS` para que también viaje en el enlace.
+
 ## Publicar
 
 GitHub Pages publica la rama `main`, así que cada push a `main` sale directo al sitio.
