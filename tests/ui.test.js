@@ -172,6 +172,28 @@ prueba('un enlace dañado o un ancla no rompen la página', async () => {
   await p.context().close();
 });
 
+prueba('"Más gastos": cerrado en el ejemplo; al llenarlo cambia la renta neta y viaja en el enlace', async () => {
+  const p = await abrir();
+  const mas = () => p.evaluate(() => ({ abierto: document.getElementById('mas-gastos').open, neta: document.getElementById('net-hint').textContent }));
+  let m = await mas();
+  assert.strictEqual(m.abierto, false); assert.strictEqual(m.neta, 'De $9,900 de renta te quedan $8,425 al mes, ya con meses vacíos y gastos.');
+  await p.click('#mas-gastos summary');
+  await escribir(p, 'predial', 6000); await escribir(p, 'seguros', 300); await escribir(p, 'repar', 5); await escribir(p, 'isr', 2);
+  m = await mas(); const v = await ver(p);
+  assert.strictEqual(m.neta, 'De $9,900 de renta te quedan $6,990 al mes, ya con meses vacíos y gastos.');
+  assert.strictEqual(v.veredicto, '6 años y 7 meses'); assert.deepStrictEqual([v.guardado.predial, v.guardado.isr], [6000, 2]);
+  await p.click('#share'); await p.waitForTimeout(100);
+  const copiado = await p.evaluate(() => navigator.clipboard.readText());
+  assert.strictEqual(copiado, BASE + '#predial=6000&seguros=300&repar=5&isr=2');
+
+  const otro = await abrir({ hash: '#predial=6000&seguros=300&repar=5&isr=2', movil: true }), w = await ver(otro);
+  assert.deepStrictEqual(otro.errores, []);
+  assert.strictEqual(await otro.evaluate(() => document.getElementById('mas-gastos').open), true, 'con gastos puestos se abre solo');
+  assert.strictEqual(w.veredicto, '6 años y 7 meses'); assert.strictEqual(w.desborde, 0);
+  assert.strictEqual(await otro.evaluate(() => document.getElementById('isr').value), '2');
+  await p.context().close(); await otro.context().close();
+});
+
 prueba('en celular, un resumen fijo muestra el resultado mientras llenas el formulario', async () => {
   const p = await abrir({ movil: true });
   const barra = () => p.evaluate(() => { const b = document.getElementById('sticky'), r = b.getBoundingClientRect(); return { visible: !b.hidden && r.height > 0, texto: b.innerText.replace(/\s+/g, ' ').trim(), top: r.top, no: b.classList.contains('no') }; });

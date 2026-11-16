@@ -103,6 +103,27 @@ prueba('Cofinavit: la subcuenta cubre primero el enganche y lo que sobra baja el
   assert.deepStrictEqual([grande.subToEng, grande.cashEng, grande.sub, grande.Li0, grande.Lb0], [180000, 0, 120000, 500000, 1000000]);
 });
 
+prueba('gastos opcionales: bajan la renta neta, no la deuda', () => {
+  const G = { predial: 6000, seguros: 300, repar: 5, isr: 2 }, base = sim({}), s = sim(G);
+  // renta cobrada 9,900 × 11/12 = 9,075; menos 7% (ISR + reparaciones), mantenimiento 650, predial 500 al mes y seguros 300
+  cerca(s.months[0].net, 9075 * 0.93 - 650 - 500 - 300, 0.01, 'renta neta');
+  assert.strictEqual(s.be, 79); assert.ok(s.be > base.be, 'tarda más en pagarse sola');
+  assert.strictEqual(s.months.length, base.months.length, 'si la renta no va al crédito, la deuda baja igual');
+  cerca(s.interest, base.interest, 0.01, 'intereses');
+  cerca(s.pocketAll - base.pocketAll, s.months.reduce((a, m, i) => a + base.months[i].net - m.net, 0), 0.01, 'lo que sale de tu bolsa sube justo lo de los gastos');
+  assert.strictEqual(sim({ ...G, meta: 'bruta' }).be, 53, 'contra la renta completa no cambia el momento');
+  const conRenta = sim({ ...G, conRenta: 'si' });
+  assert.strictEqual(conRenta.months.length, 82); assert.ok(conRenta.months.length > sim({ conRenta: 'si' }).months.length, 'si la renta va al crédito, hay menos para abonar');
+  assert.strictEqual(sim({ ...G, fin: 'cofinavit' }).be, 73);
+  // cada gasto por separado
+  cerca(sim({ predial: 12000 }).months[0].net, base.months[0].net - 1000, 0.01, 'predial se reparte por mes');
+  cerca(sim({ seguros: 400 }).months[0].net, base.months[0].net - 400, 0.01, 'seguros');
+  cerca(sim({ repar: 10 }).months[0].net, base.months[0].net - 907.5, 0.01, 'reparaciones sobre la renta cobrada');
+  cerca(sim({ isr: 10 }).months[12].net, 9900 * 1.04 * 11 / 12 * 0.9 - 650, 0.01, 'el ISR crece con la renta');
+  for (const k of Object.keys(G)) cerca(sim({ [k]: -50 }).months[0].net, base.months[0].net, 0.01, k + ' negativo cuenta como cero');
+  assert.strictEqual(L.toHash({ ...D, ...G }), 'predial=6000&seguros=300&repar=5&isr=2');
+});
+
 prueba('valores raros no rompen ni congelan el cálculo', () => {
   const t = Date.now();
   const s = sim({ plazo: 1e9, pago: 0 });
