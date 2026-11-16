@@ -97,7 +97,7 @@
     "name": "¿Qué gastos no incluye el cálculo?",
     "acceptedAnswer": {
      "@type": "Answer",
-     "text": "El ejemplo inicial no incluye ISR por rentar, predial, seguros ni reparaciones: puedes agregarlos en “Más gastos” y se descuentan de la renta neta. Los gastos de escrituración se calculan con el porcentaje que tú pongas, y la mensualidad no incluye comisiones del banco."
+     "text": "El ejemplo inicial no incluye ISR por rentar, predial, seguros ni reparaciones: puedes agregarlos en “Ajustes avanzados” y se descuentan de la renta neta. Los gastos de escrituración se calculan con el porcentaje que tú pongas, y la mensualidad no incluye comisiones del banco."
     }
    },
    {
@@ -147,11 +147,42 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15
 .brand{display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;font-family:var(--f-display);font-weight:700;font-size:17px;color:var(--fg);text-decoration:none;letter-spacing:-.01em}
 .brand img{border-radius:6px}
 .brand:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-header h1{font-family:var(--f-display);font-weight:700;font-size:clamp(24px,4vw,32px);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+header h1{font-family:var(--f-display);font-weight:700;font-size:clamp(21px,2.8vw,26px);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
 header p{margin:6px 0 0;color:var(--muted);max-width:65ch}
-.grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
-.inputs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:18px}
+.tool{display:flex;flex-direction:column;gap:20px;min-width:0;container-type:inline-size}
+/* Resultado y gráfica, lado a lado; en celular, uno sobre otro */
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:stretch}
+@media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}}
+/* Controles principales */
+.controls{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:18px}
+.controls-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.controls-head h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0}
+.ctls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl label{font-size:14px;font-weight:500}
+.ctl small{color:var(--muted);font-size:12px;line-height:1.3}
+.ctl .inp input{font-size:17px;font-weight:600;padding:9px 8px}
+input[type=range]{width:100%;margin:0;height:26px;accent-color:var(--accent);cursor:pointer;background:transparent}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+@media (max-width:980px){.ctls{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:620px){
+  .ctls{grid-template-columns:minmax(0,1fr);gap:14px}
+  .ctl{display:grid;grid-template-columns:minmax(0,1fr) 150px;align-items:center;gap:4px 10px}
+  .ctl input[type=range],.ctl small{grid-column:1/-1}
+}
+.fin{display:flex;flex-direction:column;gap:12px}
+.fin .seg{max-width:560px}
+.cofi-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px 22px;align-items:start;border-left:2px solid var(--inf);padding-left:12px;margin-left:2px}
+.cofi-box .wide{grid-column:1/-1;max-width:560px}
+/* Ajustes avanzados */
+.adv{border-top:1px solid var(--line);padding-top:14px}
+.adv>summary,.morekpi>summary,.notes>summary{cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:15px}
+.adv>summary small,.morekpi>summary small{font-family:var(--f-body);font-weight:400;font-size:12px;color:var(--muted);margin-left:6px}
+.adv>summary:focus-visible,.morekpi>summary:focus-visible,.notes>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.badge{font:600 11px var(--f-body);background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:1px}
+.adv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 28px;margin-top:16px;align-items:start}
+@media (max-width:980px){.adv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.adv-grid{grid-template-columns:minmax(0,1fr)}}
 fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 legend{font-family:var(--f-display);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;padding:0}
 .field{display:grid;grid-template-columns:minmax(0,1fr) 128px;align-items:center;gap:10px}
@@ -169,10 +200,6 @@ input:focus{outline:none}
 .seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .seg-label{font-size:14px;margin-bottom:6px}
 .seg3{grid-template-columns:1fr 1fr 1fr}
-.more summary{cursor:pointer;font-size:14px;font-weight:500}
-.more summary small{color:var(--muted);font-size:12px;font-weight:400;margin-left:4px}
-.more summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
-.more-box{display:flex;flex-direction:column;gap:10px;margin-top:10px;border-left:2px solid var(--line);padding-left:10px;margin-left:2px}
 .hint{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:6px}
 .compare tbody tr{cursor:pointer}
 .compare tbody tr:hover td{background:var(--bg)}
@@ -180,31 +207,29 @@ input:focus{outline:none}
 .compare tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .compare td.best{color:var(--good)}
 .warn{color:var(--bad);font-weight:500}
-.cofi-box{display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--inf);padding-left:10px;margin-left:2px}
 body:not(.cofi) .only-cofi{display:none}
 body:not(.cofi):not(.apoyo) .cofi-box{display:none}
 .card .sub{margin:0 0 6px;color:var(--muted);font-size:13px;max-width:70ch}
 .compare .tag{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-left:6px}
-.reset{align-self:flex-start;border:1px solid var(--line);background:transparent;color:var(--muted);font:500 13px var(--f-body);border-radius:8px;padding:7px 12px;cursor:pointer}
+.reset{flex:none;border:1px solid var(--line);background:transparent;color:var(--muted);font:500 13px var(--f-body);border-radius:8px;padding:7px 12px;cursor:pointer}
 .reset:hover{color:var(--fg);border-color:var(--muted)}
 .reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.results{display:flex;flex-direction:column;gap:20px;min-width:0;container-type:inline-size}
-.verdict{border-radius:12px;padding:18px 18px;background:var(--accent-soft);display:flex;flex-direction:column;gap:4px}
+.verdict{border-radius:16px;padding:22px;background:var(--accent-soft);display:flex;flex-direction:column;justify-content:center;gap:4px}
 .verdict.no{background:var(--rent-soft)}
 .verdict .k{font-size:13px;color:var(--muted)}
-.verdict .big{font-family:var(--f-display);font-weight:700;font-size:clamp(30px,6vw,44px);line-height:1.05;color:var(--accent);font-variant-numeric:tabular-nums}
+.verdict .big{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,5vw,50px);line-height:1.03;letter-spacing:-.015em;color:var(--accent);font-variant-numeric:tabular-nums}
 .verdict.no .big{color:var(--rent)}
-.verdict p{margin:4px 0 0;max-width:65ch}
-.share{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:10px}
+.verdict p{margin:6px 0 0;max-width:48ch}
+.share{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}
 .share button{border:1px solid var(--accent);background:transparent;color:var(--accent);font:600 13px var(--f-body);border-radius:8px;padding:7px 12px;cursor:pointer}
 .verdict.no .share button{border-color:var(--rent);color:var(--rent)}
 .share button:hover{background:var(--panel)}
 .share button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .share span{font-size:13px;color:var(--muted)}
-/* Resumen fijo: en una sola columna (celular) el resultado queda debajo del formulario; esta barra lo muestra mientras llenas los datos */
+/* Resumen fijo: cuando el resultado sale de la pantalla, esta barra lo sigue mostrando mientras mueves los números */
 .sticky{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:12px;border:0;border-bottom:1px solid var(--line);
   background:var(--accent-soft);color:var(--fg);font:500 13px var(--f-body);text-align:left;cursor:pointer;box-shadow:0 2px 10px var(--shade);
-  padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
+  padding:max(8px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px),calc(50vw - 560px)) 8px max(16px,env(safe-area-inset-left,0px),calc(50vw - 560px))}
 .sticky[hidden]{display:none}
 .sticky.no{background:var(--rent-soft)}
 .sticky span{display:flex;flex-direction:column;min-width:0}
@@ -214,15 +239,26 @@ body:not(.cofi):not(.apoyo) .cofi-box{display:none}
 .sticky.no b{color:var(--rent)}
 .sticky span+span b,.sticky.no span+span b{color:var(--fg);font-size:15px;font-weight:600}
 .sticky:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
-@media (min-width:821px){.sticky{display:none}}
-@media (max-width:820px){.inp input{scroll-margin-top:76px}}
-.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-@media (max-width:620px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi:last-child:nth-child(odd){grid-column:span 2}}
+.inp input{scroll-margin-top:76px}
+.figures{display:flex;flex-direction:column;gap:12px}
+.morekpi>.kpis{margin-top:12px}
+.kpis5{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+@media (max-width:980px){.kpis5{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+@media (max-width:620px){.kpis,.kpis5{grid-template-columns:repeat(2,minmax(0,1fr))!important}.kpi:last-child:nth-child(odd){grid-column:span 2}}
 .kpi{background:var(--panel);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .kpi .k{font-size:12px;color:var(--muted);line-height:1.3}
 .kpi .v{font-family:var(--f-display);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .kpi .s{font-size:12px;color:var(--muted)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.chartcard{display:flex;flex-direction:column}
+/* Pestañas de las comparativas */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:-6px 0 12px;overflow-x:auto}
+.tabs button{border:0;border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;color:var(--muted);font:600 14px var(--f-body);padding:10px 12px;cursor:pointer;white-space:nowrap}
+.tabs button:hover{color:var(--fg)}
+.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px}
+@media (max-width:420px){.tabs button{padding:10px 8px;font-size:13px}}
 .card h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0 0 4px}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:6px 0 4px}
 .legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
@@ -264,8 +300,7 @@ td.neg{color:var(--good)}
   .compare td::before{content:attr(data-label);color:var(--muted);font-weight:400;text-align:left}
   .compare td:first-child::before{content:none}
 }
-.notes{font-size:13px;color:var(--muted);max-width:75ch;display:flex;flex-direction:column;gap:6px}
-.notes p{margin:0}
+.notes p{font-size:13px;color:var(--muted);max-width:80ch;margin:8px 0 0}
 .noscript{margin:0;padding:12px 14px;border-radius:8px;background:var(--rent-soft);font-weight:500}
 .guide{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .guide h2{font-family:var(--f-display);font-weight:600;font-size:20px;margin:6px 0 0}
@@ -289,21 +324,43 @@ td.neg{color:var(--good)}
   <header>
     <a class="brand" href="./"><img src="favicon.svg" width="26" height="26" alt="">Se paga sola</a>
     <h1>Simulador de crédito hipotecario para México</h1>
-    <p>Calcula tu mensualidad con banco, Apoyo Infonavit o Cofinavit y ve cuánto tarda la renta en cubrirla. Los valores iniciales son solo un ejemplo: pon los de tu caso.</p>
+    <p>Ve en cuánto tiempo la renta cubre tu mensualidad, con banco, Apoyo Infonavit o Cofinavit. Los números son un ejemplo: pon los tuyos.</p>
   </header>
 
   <noscript><p class="noscript">Este simulador necesita JavaScript para hacer los cálculos. Actívalo en tu navegador para usarlo.</p></noscript>
 
-  <main class="grid">
-    <form class="inputs" id="form" novalidate>
-      <fieldset>
-        <legend>Compra</legend>
-        <div class="field"><label for="precio">Precio de la vivienda</label><div class="inp"><span>$</span><input id="precio" type="number" inputmode="numeric" step="10000" min="0"></div></div>
-        <div class="field"><label for="eng">Enganche<small id="eng-hint"></small></label><div class="inp"><input id="eng" type="number" inputmode="decimal" step="1" min="0" max="100"><span>%</span></div></div>
-        <div class="field"><label for="gastos">Gastos de escrituración<small>Notario, impuesto, avalúo</small></label><div class="inp"><input id="gastos" type="number" inputmode="decimal" step="0.5" min="0"><span>%</span></div></div>
-      </fieldset>
-      <fieldset>
-        <legend>Crédito</legend>
+  <main class="tool">
+    <!-- 1. La respuesta primero: resultado y gráfica -->
+    <section class="hero" aria-label="Resultado">
+      <div class="verdict" id="verdict">
+        <span class="k">Se paga sola en</span>
+        <span class="big" id="v-big">—</span>
+        <p id="v-text"></p>
+        <div class="share"><button type="button" id="share">Copiar enlace</button><span id="share-msg" role="status" aria-live="polite"></span></div>
+      </div>
+      <div class="card chartcard">
+        <h2>Mensualidad contra renta</h2>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Mensualidad total</span><span class="only-cofi"><i style="background:var(--inf)"></i>Parte Infonavit</span><span><i style="background:var(--rent)"></i><span id="lg-rent">Renta neta</span></span></div>
+        <div class="readout" id="readout"></div>
+        <svg id="chart" role="img" aria-label="Mensualidad y renta a lo largo del crédito"></svg>
+      </div>
+    </section>
+
+    <!-- 2. Los cinco números que más mueven el resultado; lo demás va en "Ajustes avanzados" -->
+    <form class="controls" id="form" novalidate>
+      <div class="controls-head">
+        <h2>Ajusta tu caso</h2>
+        <button type="button" class="reset" id="reset">Volver al ejemplo</button>
+      </div>
+      <div class="ctls">
+        <div class="ctl"><label for="precio">Precio de la vivienda</label><div class="inp"><span>$</span><input id="precio" type="text" inputmode="numeric" autocomplete="off"></div><input type="range" id="precio-r" aria-label="Precio de la vivienda" tabindex="-1"></div>
+        <div class="ctl"><label for="eng">Enganche</label><div class="inp"><input id="eng" type="number" inputmode="decimal" step="1" min="0" max="100"><span>%</span></div><input type="range" id="eng-r" aria-label="Enganche" tabindex="-1"><small id="eng-hint"></small></div>
+        <div class="ctl"><label for="tasa">Tasa del banco</label><div class="inp"><input id="tasa" type="number" inputmode="decimal" step="0.1" min="0"><span>%</span></div><input type="range" id="tasa-r" aria-label="Tasa del banco" tabindex="-1"><small>Ejemplo; usa tu cotización</small></div>
+        <div class="ctl"><label for="renta">Renta mensual</label><div class="inp"><span>$</span><input id="renta" type="text" inputmode="numeric" autocomplete="off"></div><input type="range" id="renta-r" aria-label="Renta mensual" tabindex="-1"><small id="net-hint"></small></div>
+        <div class="ctl"><label for="pago">Pagas cada mes</label><div class="inp"><span>$</span><input id="pago" type="text" inputmode="numeric" autocomplete="off"></div><input type="range" id="pago-r" aria-label="Pagas cada mes" tabindex="-1"><small id="pago-hint">Se cubre la mensualidad y el resto va a capital</small></div>
+      </div>
+
+      <div class="fin">
         <div>
           <div class="seg-label">Financiamiento</div>
           <div class="seg seg3" role="group" aria-label="Tipo de financiamiento">
@@ -312,15 +369,13 @@ td.neg{color:var(--good)}
             <button type="button" id="fin-cofi" data-fin="cofinavit">Cofinavit<br><small>Infonavit + banco</small></button>
           </div>
         </div>
-        <div class="field"><label for="tasa">Tasa del banco<small>Ejemplo; usa tu cotización</small></label><div class="inp"><input id="tasa" type="number" inputmode="decimal" step="0.1" min="0"><span>%</span></div></div>
-        <div class="field"><label for="plazo">Plazo del banco</label><div class="inp"><input id="plazo" type="number" inputmode="numeric" step="1" min="1" max="40"><span>años</span></div></div>
         <div class="cofi-box" id="cofi-fields">
-          <div class="field"><label for="subcuenta">Subcuenta de vivienda<small id="sub-hint">Tu ahorro en Infonavit; se aplica a la compra</small></label><div class="inp"><span>$</span><input id="subcuenta" type="number" inputmode="numeric" step="5000" min="0"></div></div>
-          <div class="field only-cofi"><label for="infMonto">Crédito Infonavit<small>El de tu precalificación</small></label><div class="inp"><span>$</span><input id="infMonto" type="number" inputmode="numeric" step="10000" min="0"></div></div>
+          <div class="field"><label for="subcuenta">Subcuenta de vivienda<small id="sub-hint">Tu ahorro en Infonavit; se aplica a la compra</small></label><div class="inp"><span>$</span><input id="subcuenta" type="text" inputmode="numeric" autocomplete="off"></div></div>
+          <div class="field only-cofi"><label for="infMonto">Crédito Infonavit<small>El de tu precalificación</small></label><div class="inp"><span>$</span><input id="infMonto" type="text" inputmode="numeric" autocomplete="off"></div></div>
           <div class="field only-cofi"><label for="infTasa">Tasa Infonavit<small>Fija; hasta 10.45%, según salario y producto</small></label><div class="inp"><input id="infTasa" type="number" inputmode="decimal" step="0.01" min="0"><span>%</span></div></div>
           <div class="field only-cofi"><label for="infPlazo">Plazo Infonavit</label><div class="inp"><input id="infPlazo" type="number" inputmode="numeric" step="1" min="1" max="30"><span>años</span></div></div>
-          <div class="field"><label for="aport">Aportación de tu patrón<small>5% de tu salario; va a capital</small></label><div class="inp"><span>$</span><input id="aport" type="number" inputmode="numeric" step="100" min="0"></div></div>
-          <div>
+          <div class="field"><label for="aport">Aportación de tu patrón<small>5% de tu salario; va a capital</small></label><div class="inp"><span>$</span><input id="aport" type="text" inputmode="numeric" autocomplete="off"></div></div>
+          <div class="wide">
             <div class="seg-label">En el crédito del banco, la aportación</div>
             <div class="seg" role="group" aria-label="Cómo se aplica la aportación del patrón">
               <button type="button" id="aport-camino" data-aportmodo="camino">Sigue tu camino<br><small>igual que tus abonos</small></button>
@@ -329,87 +384,85 @@ td.neg{color:var(--good)}
             <small class="hint" id="aport-hint"></small>
           </div>
         </div>
-      </fieldset>
-      <fieldset>
-        <legend>Renta</legend>
-        <div class="field"><label for="renta">Renta mensual</label><div class="inp"><span>$</span><input id="renta" type="number" inputmode="numeric" step="100" min="0"></div></div>
-        <div class="field"><label for="aumento">Aumento de renta al año</label><div class="inp"><input id="aumento" type="number" inputmode="decimal" step="0.5"><span>%</span></div></div>
-        <div class="field"><label for="mant">Mantenimiento al mes</label><div class="inp"><span>$</span><input id="mant" type="number" inputmode="numeric" step="50" min="0"></div></div>
-        <div class="field"><label for="vacios">Meses vacío al año</label><div class="inp"><input id="vacios" type="number" inputmode="decimal" step="0.5" min="0" max="12"><span>meses</span></div></div>
-        <details class="more" id="mas-gastos">
-          <summary>Más gastos <small>predial, seguros, reparaciones, ISR</small></summary>
-          <div class="more-box">
-            <div class="field"><label for="predial">Predial al año</label><div class="inp"><span>$</span><input id="predial" type="number" inputmode="numeric" step="500" min="0"></div></div>
-            <div class="field"><label for="seguros">Seguros al mes<small>Del crédito (vida y daños) o de la vivienda</small></label><div class="inp"><span>$</span><input id="seguros" type="number" inputmode="numeric" step="50" min="0"></div></div>
-            <div class="field"><label for="repar">Reparaciones<small>% de la renta que cobras</small></label><div class="inp"><input id="repar" type="number" inputmode="decimal" step="1" min="0" max="100"><span>%</span></div></div>
-            <div class="field"><label for="isr">ISR por rentar<small>% de la renta que cobras; depende de tu régimen fiscal</small></label><div class="inp"><input id="isr" type="number" inputmode="decimal" step="0.5" min="0" max="100"><span>%</span></div></div>
-          </div>
-        </details>
-        <small class="hint" id="net-hint"></small>
-      </fieldset>
-      <fieldset>
-        <legend>Lo que pagas</legend>
-        <div class="field"><label for="pago">Pagas cada mes<small id="pago-hint">Se cubre la mensualidad y el resto va a capital</small></label><div class="inp"><span>$</span><input id="pago" type="number" inputmode="numeric" step="500" min="0"></div></div>
-        <div>
-          <div class="seg-label">La renta</div>
-          <div class="seg" role="group" aria-label="Uso de la renta">
-            <button type="button" id="renta-no" data-conrenta="no">Me la quedo<br><small>no va al crédito</small></button>
-            <button type="button" id="renta-si" data-conrenta="si">También va al crédito<br><small>se suma a tu pago</small></button>
-          </div>
-        </div>
-        <div class="field"><label for="anual">Extra una vez al año<small>Aguinaldo, bonos</small></label><div class="inp"><span>$</span><input id="anual" type="number" inputmode="numeric" step="1000" min="0"></div></div>
-        <div>
-          <div class="seg-label">Los abonos sirven para</div>
-          <div class="seg seg3" role="group" aria-label="Efecto de los abonos">
-            <button type="button" id="modo-mens" data-modo="mensualidad">Bajar mensualidad<br><small>banco</small></button>
-            <button type="button" id="modo-hib" data-modo="hibrido">Híbrido<br><small>banco</small></button>
-            <button type="button" id="modo-plazo" data-modo="plazo">Bajar plazo<br><small>Infonavit</small></button>
-          </div>
-          <small class="hint" id="modo-hint"></small>
-        </div>
-        <div>
-          <div class="seg-label">Se paga sola cuando la mensualidad iguala</div>
-          <div class="seg" role="group" aria-label="Meta">
-            <button type="button" id="meta-neta" data-meta="neta">Renta neta<br><small>tras gastos</small></button>
-            <button type="button" id="meta-bruta" data-meta="bruta">Renta completa<br><small>sin descontar</small></button>
-          </div>
-        </div>
-      </fieldset>
-      <button type="button" class="reset" id="reset">Volver al ejemplo</button>
-    </form>
-
-    <div class="results">
-      <div class="verdict" id="verdict">
-        <span class="k">Se paga sola en</span>
-        <span class="big" id="v-big">—</span>
-        <p id="v-text"></p>
-        <div class="share"><button type="button" id="share">Copiar enlace</button><span id="share-msg" role="status" aria-live="polite"></span></div>
       </div>
 
+      <details class="adv" id="adv">
+        <summary>Ajustes avanzados <small>plazo, gastos de la vivienda, abonos</small><span class="badge" id="adv-badge" hidden></span></summary>
+        <div class="adv-grid">
+          <fieldset>
+            <legend>Crédito y pagos</legend>
+            <div class="field"><label for="plazo">Plazo del banco</label><div class="inp"><input id="plazo" type="number" inputmode="numeric" step="1" min="1" max="40"><span>años</span></div></div>
+            <div class="field"><label for="gastos">Gastos de escrituración<small>Notario, impuesto, avalúo</small></label><div class="inp"><input id="gastos" type="number" inputmode="decimal" step="0.5" min="0"><span>%</span></div></div>
+            <div class="field"><label for="anual">Extra una vez al año<small>Aguinaldo, bonos</small></label><div class="inp"><span>$</span><input id="anual" type="text" inputmode="numeric" autocomplete="off"></div></div>
+            <div>
+              <div class="seg-label">La renta</div>
+              <div class="seg" role="group" aria-label="Uso de la renta">
+                <button type="button" id="renta-no" data-conrenta="no">Me la quedo<br><small>no va al crédito</small></button>
+                <button type="button" id="renta-si" data-conrenta="si">También va al crédito<br><small>se suma a tu pago</small></button>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Renta y gastos de la vivienda</legend>
+            <div class="field"><label for="aumento">Aumento de renta al año</label><div class="inp"><input id="aumento" type="number" inputmode="decimal" step="0.5"><span>%</span></div></div>
+            <div class="field"><label for="vacios">Meses vacío al año</label><div class="inp"><input id="vacios" type="number" inputmode="decimal" step="0.5" min="0" max="12"><span>meses</span></div></div>
+            <div class="field"><label for="mant">Mantenimiento al mes</label><div class="inp"><span>$</span><input id="mant" type="text" inputmode="numeric" autocomplete="off"></div></div>
+            <div class="field"><label for="predial">Predial al año</label><div class="inp"><span>$</span><input id="predial" type="text" inputmode="numeric" autocomplete="off"></div></div>
+            <div class="field"><label for="seguros">Seguros al mes<small>Del crédito (vida y daños) o de la vivienda</small></label><div class="inp"><span>$</span><input id="seguros" type="text" inputmode="numeric" autocomplete="off"></div></div>
+            <div class="field"><label for="repar">Reparaciones<small>% de la renta que cobras</small></label><div class="inp"><input id="repar" type="number" inputmode="decimal" step="1" min="0" max="100"><span>%</span></div></div>
+            <div class="field"><label for="isr">ISR por rentar<small>% de la renta que cobras; depende de tu régimen fiscal</small></label><div class="inp"><input id="isr" type="number" inputmode="decimal" step="0.5" min="0" max="100"><span>%</span></div></div>
+          </fieldset>
+          <fieldset>
+            <legend>Abonos y meta</legend>
+            <div>
+              <div class="seg-label">Los abonos sirven para</div>
+              <div class="seg seg3" role="group" aria-label="Efecto de los abonos">
+                <button type="button" id="modo-mens" data-modo="mensualidad">Bajar mensualidad<br><small>banco</small></button>
+                <button type="button" id="modo-hib" data-modo="hibrido">Híbrido<br><small>banco</small></button>
+                <button type="button" id="modo-plazo" data-modo="plazo">Bajar plazo<br><small>Infonavit</small></button>
+              </div>
+              <small class="hint" id="modo-hint"></small>
+            </div>
+            <div>
+              <div class="seg-label">Se paga sola cuando la mensualidad iguala</div>
+              <div class="seg" role="group" aria-label="Meta">
+                <button type="button" id="meta-neta" data-meta="neta">Renta neta<br><small>tras gastos</small></button>
+                <button type="button" id="meta-bruta" data-meta="bruta">Renta completa<br><small>sin descontar</small></button>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </details>
+    </form>
+
+    <!-- 3. Las cifras: cuatro principales y el resto plegado -->
+    <section class="figures" aria-label="Cifras">
       <div class="kpis">
         <div class="kpi"><span class="k">Mensualidad inicial</span><span class="v" id="k-pay">—</span><span class="s" id="k-pay-s"></span></div>
         <div class="kpi"><span class="k">Pones de tu bolsa al inicio</span><span class="v" id="k-start">—</span><span class="s">al mes, con abonos</span></div>
-        <div class="kpi"><span class="k">Total de tu bolsa hasta pagarse sola</span><span class="v" id="k-pocket">—</span><span class="s" id="k-pocket-s">sin contar enganche</span></div>
-        <div class="kpi"><span class="k">Total de tu bolsa hasta liquidar la deuda</span><span class="v" id="k-pocket-all">—</span><span class="s" id="k-pocket-all-s">sin contar enganche</span></div>
         <div class="kpi"><span class="k">Efectivo para firmar</span><span class="v" id="k-cash">—</span><span class="s" id="k-cash-s"></span></div>
-        <div class="kpi"><span class="k">Préstamo</span><span class="v" id="k-loan">—</span><span class="s" id="k-loan-s"></span></div>
         <div class="kpi"><span class="k">Terminas de pagar en</span><span class="v" id="k-end">—</span><span class="s" id="k-end-s"></span></div>
-        <div class="kpi"><span class="k">Intereses totales</span><span class="v" id="k-int">—</span><span class="s" id="k-int-s"></span></div>
-        <div class="kpi"><span class="k">Rendimiento bruto de renta</span><span class="v" id="k-yield">—</span><span class="s">renta anual ÷ precio</span></div>
       </div>
-
-      <div class="card">
-        <h2>Los tres caminos con tus mismos abonos</h2>
-        <div class="tablebox">
-          <table class="compare">
-            <thead><tr><th scope="col">Camino</th><th scope="col">Se paga sola en</th><th scope="col">Terminas de pagar en</th><th scope="col">Intereses totales</th><th scope="col">De tu bolsa hasta pagarse sola</th><th scope="col">Total de tu bolsa hasta liquidar<br><small>con enganche y gastos</small></th></tr></thead>
-            <tbody id="cmp"></tbody>
-          </table>
+      <details class="morekpi" id="morekpi">
+        <summary>Más cifras <small>préstamo, intereses, total de tu bolsa</small></summary>
+        <div class="kpis kpis5">
+          <div class="kpi"><span class="k">Préstamo</span><span class="v" id="k-loan">—</span><span class="s" id="k-loan-s"></span></div>
+          <div class="kpi"><span class="k">Intereses totales</span><span class="v" id="k-int">—</span><span class="s" id="k-int-s"></span></div>
+          <div class="kpi"><span class="k">Total de tu bolsa hasta pagarse sola</span><span class="v" id="k-pocket">—</span><span class="s" id="k-pocket-s">sin contar enganche</span></div>
+          <div class="kpi"><span class="k">Total de tu bolsa hasta liquidar la deuda</span><span class="v" id="k-pocket-all">—</span><span class="s" id="k-pocket-all-s">sin contar enganche</span></div>
+          <div class="kpi"><span class="k">Rendimiento bruto de renta</span><span class="v" id="k-yield">—</span><span class="s">renta anual ÷ precio</span></div>
         </div>
-      </div>
+      </details>
+    </section>
 
-      <div class="card">
-        <h2>Solo banco, Apoyo Infonavit o Cofinavit</h2>
+    <!-- 4. Comparativas y tabla, en pestañas -->
+    <section class="card tabcard" aria-label="Comparativas">
+      <div class="tabs" role="tablist" aria-label="Comparativas">
+        <button type="button" role="tab" id="tab-fin" aria-controls="panel-fin" aria-selected="true">Banco o Infonavit</button>
+        <button type="button" role="tab" id="tab-modo" aria-controls="panel-modo" aria-selected="false" tabindex="-1">Abonos</button>
+        <button type="button" role="tab" id="tab-year" aria-controls="panel-year" aria-selected="false" tabindex="-1">Año por año</button>
+      </div>
+      <div role="tabpanel" id="panel-fin" aria-labelledby="tab-fin">
         <p class="sub" id="fin-sub"></p>
         <div class="tablebox">
           <table class="compare">
@@ -418,16 +471,16 @@ td.neg{color:var(--good)}
           </table>
         </div>
       </div>
-
-      <div class="card">
-        <h2>Mensualidad contra renta</h2>
-        <div class="legend"><span><i style="background:var(--accent)"></i>Mensualidad total</span><span class="only-cofi"><i style="background:var(--inf)"></i>Parte Infonavit</span><span><i style="background:var(--rent)"></i><span id="lg-rent">Renta neta</span></span></div>
-        <div class="readout" id="readout"></div>
-        <svg id="chart" role="img" aria-label="Mensualidad y renta a lo largo del crédito"></svg>
+      <div role="tabpanel" id="panel-modo" aria-labelledby="tab-modo" hidden>
+        <p class="sub">Los tres caminos para aplicar tus mismos abonos. Elige uno para usarlo en el cálculo.</p>
+        <div class="tablebox">
+          <table class="compare">
+            <thead><tr><th scope="col">Camino</th><th scope="col">Se paga sola en</th><th scope="col">Terminas de pagar en</th><th scope="col">Intereses totales</th><th scope="col">De tu bolsa hasta pagarse sola</th><th scope="col">Total de tu bolsa hasta liquidar<br><small>con enganche y gastos</small></th></tr></thead>
+            <tbody id="cmp"></tbody>
+          </table>
+        </div>
       </div>
-
-      <div class="card">
-        <h2>Año por año</h2>
+      <div role="tabpanel" id="panel-year" aria-labelledby="tab-year" hidden>
         <div class="tablebox">
           <table class="year">
             <thead><tr><th scope="col">Año</th><th scope="col">Mensualidad</th><th scope="col" class="only-cofi">Infonavit</th><th scope="col" class="only-cofi">Banco</th><th scope="col">A capital / mes</th><th scope="col" id="th-rent">Renta neta</th><th scope="col">De tu bolsa / mes</th><th scope="col">Saldo al cierre</th></tr></thead>
@@ -435,26 +488,27 @@ td.neg{color:var(--good)}
           </table>
         </div>
       </div>
+    </section>
 
-      <div class="notes">
-        <p><b>Renta neta</b> = renta × (meses rentado ÷ 12) − mantenimiento − lo que pongas en "Más gastos" (predial, seguros, reparaciones e ISR). Cada mes se cubre primero la mensualidad con lo que pagas al banco; lo que sobra va a capital. "De tu bolsa" es lo que pagas al banco menos la renta neta que recibes; un número negativo es dinero que te sobra.</p>
-        <p>Si pagas siempre la misma cantidad, la deuda baja igual en los tres caminos; lo que cambia es la mensualidad mínima que te exige el banco, que es tu colchón si un mes no puedes pagar de más.</p>
-        <p>ISR por rentar, predial, seguros y reparaciones solo cuentan si los pones en "Más gastos"; el ejemplo inicial los deja en cero. El ISR depende de tu régimen fiscal: pregúntale a tu contador qué porcentaje de la renta te toca. La tasa del crédito es solo un ejemplo: pide cotizaciones reales.</p>
-        <p>"Bajar mensualidad" funciona con bancos que recalculan el pago al abonar a capital. Con Infonavit los abonos solo acortan el plazo.</p>
-        <p>"Híbrido": abonas para bajar la mensualidad hasta que la renta la cubre; desde ese mes congelas el pago en ese nivel y los abonos siguientes acortan el plazo. Pídele al banco que aplique cada abono como quieras.</p>
-        <p><b>Cofinavit</b>: tu subcuenta paga primero el enganche y, si sobra, baja el préstamo. El crédito Infonavit cubre otra parte del precio y el banco presta el resto. Revisa con el banco que acepte la subcuenta como parte del enganche mínimo. La parte Infonavit se descuenta de tu nómina con pago fijo; la aportación de tu patrón (5% del salario) la abona primero y, al liquidarla, pasa a la parte del banco. Lo que pagas de más va primero al crédito con tasa más alta. Los tres caminos aplican a la parte del banco. "Solo banco" no usa tu subcuenta ni la aportación de tu patrón.</p>
-        <p><b>Apoyo Infonavit</b>: todo el préstamo es del banco. Tu subcuenta no se usa para la compra: se queda como garantía y, si pierdes tu empleo, el banco cobra de ahí las mensualidades hasta agotarla. La aportación de tu patrón se abona al capital del crédito bancario y aquí se aplica según el camino que elijas. Se aportan cada bimestre; el simulador la reparte por mes. Algunas fuentes mencionan un tope al valor de la vivienda para este esquema; confírmalo con el banco.</p>
-      </div>
-    </div>
+    <details class="card notes">
+      <summary>Cómo se calcula y qué supone</summary>
+      <p><b>Renta neta</b> = renta × (meses rentado ÷ 12) − mantenimiento − los demás gastos que pongas en "Ajustes avanzados" (predial, seguros, reparaciones e ISR). Cada mes se cubre primero la mensualidad con lo que pagas al banco; lo que sobra va a capital. "De tu bolsa" es lo que pagas al banco menos la renta neta que recibes; un número negativo es dinero que te sobra.</p>
+      <p>Si pagas siempre la misma cantidad, la deuda baja igual en los tres caminos; lo que cambia es la mensualidad mínima que te exige el banco, que es tu colchón si un mes no puedes pagar de más.</p>
+      <p>ISR por rentar, predial, seguros y reparaciones solo cuentan si los pones en "Ajustes avanzados"; el ejemplo inicial los deja en cero. El ISR depende de tu régimen fiscal: pregúntale a tu contador qué porcentaje de la renta te toca. La tasa del crédito es solo un ejemplo: pide cotizaciones reales.</p>
+      <p>"Bajar mensualidad" funciona con bancos que recalculan el pago al abonar a capital. Con Infonavit los abonos solo acortan el plazo.</p>
+      <p>"Híbrido": abonas para bajar la mensualidad hasta que la renta la cubre; desde ese mes congelas el pago en ese nivel y los abonos siguientes acortan el plazo. Pídele al banco que aplique cada abono como quieras.</p>
+      <p><b>Cofinavit</b>: tu subcuenta paga primero el enganche y, si sobra, baja el préstamo. El crédito Infonavit cubre otra parte del precio y el banco presta el resto. Revisa con el banco que acepte la subcuenta como parte del enganche mínimo. La parte Infonavit se descuenta de tu nómina con pago fijo; la aportación de tu patrón (5% del salario) la abona primero y, al liquidarla, pasa a la parte del banco. Lo que pagas de más va primero al crédito con tasa más alta. Los tres caminos aplican a la parte del banco. "Solo banco" no usa tu subcuenta ni la aportación de tu patrón.</p>
+      <p><b>Apoyo Infonavit</b>: todo el préstamo es del banco. Tu subcuenta no se usa para la compra: se queda como garantía y, si pierdes tu empleo, el banco cobra de ahí las mensualidades hasta agotarla. La aportación de tu patrón se abona al capital del crédito bancario y aquí se aplica según el camino que elijas. Se aportan cada bimestre; el simulador la reparte por mes. Algunas fuentes mencionan un tope al valor de la vivienda para este esquema; confírmalo con el banco.</p>
+    </details>
   </main>
 
   <section class="guide" aria-labelledby="guia-t">
     <h2 id="guia-t">Cómo usar el simulador</h2>
     <ol>
-      <li><b>Datos de la compra.</b> Escribe el precio, el enganche y los gastos de escrituración.</li>
-      <li><b>Tu crédito.</b> Elige solo banco, Apoyo Infonavit o Cofinavit, y pon la tasa y el plazo de tu cotización.</li>
-      <li><b>La renta.</b> Indica cuánto esperas cobrar, cuánto subiría al año, el mantenimiento y los meses sin inquilino. En “Más gastos” puedes sumar predial, seguros, reparaciones e ISR.</li>
-      <li><b>Lo que pagas.</b> Pon cuánto puedes pagar al mes y compara los caminos para aplicar tus abonos.</li>
+      <li><b>Mira el ejemplo.</b> Arriba ves en cuánto tiempo la renta cubre la mensualidad y cómo cambian las dos con los años.</li>
+      <li><b>Pon tus números.</b> Cambia el precio, el enganche, la tasa, la renta y lo que puedes pagar al mes; elige solo banco, Apoyo Infonavit o Cofinavit.</li>
+      <li><b>Afina.</b> En “Ajustes avanzados” están el plazo, los gastos de la vivienda (mantenimiento, predial, seguros, reparaciones, ISR) y cómo aplicar tus abonos.</li>
+      <li><b>Compara y comparte.</b> Revisa las comparativas y la tabla año por año, y manda tu escenario con “Copiar enlace”.</li>
     </ol>
     <h2>Preguntas frecuentes</h2>
     <div class="faq">
@@ -464,7 +518,7 @@ td.neg{color:var(--good)}
       <details><summary>¿Qué es Cofinavit?</summary><p>Es un crédito para comprar vivienda que combina un préstamo de Infonavit con uno de un banco. Tu subcuenta de vivienda puede aplicarse a la compra, por ejemplo al enganche. Las condiciones y los montos dependen de tu precalificación y del banco.</p></details>
       <details><summary>¿Qué es Apoyo Infonavit?</summary><p>Es un crédito del banco en el que tu subcuenta de vivienda queda como garantía: puede cubrir mensualidades si dejas de trabajar para un patrón. Las aportaciones de tu patrón, del 5% de tu salario, se aplican al crédito. Pregúntale a tu banco si reducen la mensualidad o el plazo.</p></details>
       <details><summary>¿Qué tasa de interés cobra Infonavit?</summary><p>La tasa de los créditos de Infonavit para comprar vivienda es fija y, según la tabla publicada para 2026, va de 3.69% a 10.45% anual de acuerdo con tu salario. En los créditos combinados con un banco la tasa de cada parte puede ser distinta. Confirma la tuya en Mi Cuenta Infonavit.</p></details>
-      <details><summary>¿Qué gastos no incluye el cálculo?</summary><p>El ejemplo inicial no incluye ISR por rentar, predial, seguros ni reparaciones: puedes agregarlos en “Más gastos” y se descuentan de la renta neta. Los gastos de escrituración se calculan con el porcentaje que tú pongas, y la mensualidad no incluye comisiones del banco.</p></details>
+      <details><summary>¿Qué gastos no incluye el cálculo?</summary><p>El ejemplo inicial no incluye ISR por rentar, predial, seguros ni reparaciones: puedes agregarlos en “Ajustes avanzados” y se descuentan de la renta neta. Los gastos de escrituración se calculan con el porcentaje que tú pongas, y la mensualidad no incluye comisiones del banco.</p></details>
       <details><summary>¿Se guardan mis datos?</summary><p>Los valores que escribes se guardan solo en tu navegador para que no los pierdas al volver. No hay cuentas y esos datos no se envían a ningún servidor. Si usas “Copiar enlace”, los valores van dentro del enlace y los ve quien lo reciba.</p></details>
     </div>
   </section>
@@ -615,10 +669,32 @@ var SimLogica=(function(){
     return parts.length?parts.join(' y '):'0 meses';
   }
 
+  // Montos en pesos: se escriben y se muestran con separador de miles
+  var MONEY=['precio','renta','pago','anual','mant','subcuenta','infMonto','aport','predial','seguros'];
+  var miles=new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+  function isMoney(k){return MONEY.indexOf(k)!==-1;}
+  function setField(k){$(k).value=isMoney(k)?miles.format(Math.max(0,state[k])):state[k];}
+  // Da formato mientras se escribe sin que el cursor brinque: lo deja tras el mismo número de dígitos
+  function formatMoney(el){
+    var pos=el.selectionStart==null?el.value.length:el.selectionStart;
+    var before=el.value.slice(0,pos).replace(/\D/g,'').length, raw=el.value.replace(/\D/g,'').replace(/^0+(?=\d)/,'');
+    var f=raw===''?'':miles.format(Number(raw)), i=0, d=0;
+    while(i<f.length&&d<before){if(/\d/.test(f.charAt(i)))d++;i++;}
+    el.value=f;
+    try{el.setSelectionRange(i,i);}catch(e){}
+    return raw===''?0:Number(raw);
+  }
+  // Deslizadores de los controles principales: [mínimo, máximo, paso]. Si escribes un valor mayor, el máximo se estira.
+  var RANGES={precio:[300000,10000000,50000],eng:[0,60,1],tasa:[5,18,0.1],renta:[0,60000,100],pago:[0,100000,500]};
+  function syncRange(k){var c=RANGES[k]; if(!c)return; var r=$(k+'-r'); r.max=Math.max(c[1],state[k]); r.value=state[k];}
+  // Ajustes avanzados: cuántos difieren del ejemplo (se avisa en el título)
+  var ADV=['plazo','gastos','anual','conRenta','aumento','vacios','mant','predial','seguros','repar','isr','modo','meta'];
+  function advCount(){return ADV.filter(function(k){return state[k]!==DEFAULTS[k];}).length;}
+  function syncAdv(){var n=advCount(); $('adv-badge').hidden=!n; $('adv-badge').textContent=n+(n===1?' cambio':' cambios');}
   function fillInputs(){
-    KEYS.forEach(function(k){$(k).value=state[k];});
-    // si ya hay gastos opcionales (guardados o de un enlace), se muestran abiertos
-    if(state.predial||state.seguros||state.repar||state.isr)$('mas-gastos').open=true;
+    KEYS.forEach(function(k){setField(k);syncRange(k);});
+    // si ya hay ajustes avanzados (guardados o de un enlace), se muestran abiertos
+    if(advCount())$('adv').open=true;
     syncSeg();
   }
   function syncSeg(){
@@ -633,7 +709,6 @@ var SimLogica=(function(){
     document.body.classList.toggle('cofi',cofi);
     document.body.classList.toggle('apoyo',apoyo);
     $('sub-hint').textContent=apoyo?'Se queda como garantía si pierdes tu empleo':'Cubre primero tu enganche; lo que sobre baja el préstamo';
-    $('eng-hint').textContent=cofi?'Total; tu subcuenta pone una parte':'';
     $('aport-camino').setAttribute('aria-pressed',state.aportModo!=='plazo');
     $('aport-plazo').setAttribute('aria-pressed',state.aportModo==='plazo');
     $('aport-hint').textContent=cofi
@@ -678,7 +753,9 @@ var SimLogica=(function(){
       $('v-text').appendChild(w);
     }
 
-    $('net-hint').textContent=s.months.length?('De '+fm(m0.rent)+' de renta te quedan '+fm(m0.net)+' al mes, ya con meses vacíos y gastos.'):'';
+    $('net-hint').textContent=s.months.length?('Te quedan '+fm(m0.net)+' al mes tras meses vacíos y gastos'):'';
+    $('eng-hint').textContent=fm(s.engTotal)+(s.subToEng>0?'; tu subcuenta pone '+fm(s.subToEng):'');
+    syncAdv();
     $('k-pay').textContent=fm(m0.pay);
     $('sticky').classList.toggle('no',s.be===null);
     $('st-big').textContent=$('v-big').textContent; $('st-pay').textContent=fm(m0.pay);
@@ -865,7 +942,26 @@ var SimLogica=(function(){
 
   KEYS.forEach(function(k){
     $(k).addEventListener('input',function(){
-      var v=parseFloat(this.value); state[k]=isNaN(v)?0:v; hoverM=null; save(); render();
+      var v=isMoney(k)?formatMoney(this):parseFloat(this.value);
+      state[k]=isNaN(v)?0:v; syncRange(k); hoverM=null; save(); render();
+    });
+  });
+  Object.keys(RANGES).forEach(function(k){
+    var r=$(k+'-r'), c=RANGES[k];
+    r.min=c[0]; r.max=c[1]; r.step=c[2]; syncRange(k);
+    r.addEventListener('input',function(){state[k]=parseFloat(r.value); setField(k); hoverM=null; save(); render();});
+  });
+  // Pestañas de las comparativas (flechas izquierda y derecha para cambiar)
+  var tabs=[].slice.call(document.querySelectorAll('[role="tab"]'));
+  function selectTab(t,focus){
+    tabs.forEach(function(b){var on=b===t; b.setAttribute('aria-selected',on); b.tabIndex=on?0:-1; $(b.getAttribute('aria-controls')).hidden=!on;});
+    if(focus)t.focus();
+  }
+  tabs.forEach(function(b,i){
+    b.addEventListener('click',function(){selectTab(b);});
+    b.addEventListener('keydown',function(e){
+      var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0; if(!d)return;
+      e.preventDefault(); selectTab(tabs[(i+d+tabs.length)%tabs.length],true);
     });
   });
   document.querySelectorAll('[data-modo]').forEach(function(b){b.addEventListener('click',function(){state.modo=b.dataset.modo;syncSeg();save();render();});});
@@ -876,12 +972,12 @@ var SimLogica=(function(){
   $('reset').addEventListener('click',function(){state=Object.assign({},DEFAULTS);fillInputs();save();hoverM=null;render();});
   $('form').addEventListener('submit',function(e){e.preventDefault();});
 
-  // Resumen fijo: aparece cuando el encabezado ya salió de la pantalla y el resultado sigue más abajo
+  // Resumen fijo: aparece cuando el resultado sale de la pantalla y el simulador sigue a la vista
   if('IntersectionObserver' in window){
-    var headOut=false, verdictBelow=false;
-    var syncSticky=function(){$('sticky').hidden=!(headOut&&verdictBelow);};
-    new IntersectionObserver(function(es){headOut=!es[es.length-1].isIntersecting;syncSticky();}).observe(document.querySelector('header'));
-    new IntersectionObserver(function(es){var e=es[es.length-1];verdictBelow=!e.isIntersecting&&e.boundingClientRect.top>0;syncSticky();}).observe($('verdict'));
+    var verdictSeen=true, toolSeen=true;
+    var syncSticky=function(){$('sticky').hidden=verdictSeen||!toolSeen;};
+    new IntersectionObserver(function(es){verdictSeen=es[es.length-1].isIntersecting;syncSticky();}).observe($('verdict'));
+    new IntersectionObserver(function(es){toolSeen=es[es.length-1].isIntersecting;syncSticky();}).observe(document.querySelector('.tool'));
     $('sticky').addEventListener('click',function(){
       var calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
       $('verdict').scrollIntoView({behavior:calm?'auto':'smooth',block:'start'});
