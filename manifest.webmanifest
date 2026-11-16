@@ -1,6 +1,6 @@
 {
-  "name": "Simulador de crédito hipotecario para México",
-  "short_name": "Simulador hipoteca",
+  "name": "Se paga sola: simulador de crédito hipotecario",
+  "short_name": "Se paga sola",
   "description": "Calcula tu mensualidad y en cuánto tiempo la renta la cubre, con banco, Apoyo Infonavit o Cofinavit.",
   "lang": "es-MX",
   "start_url": "./",

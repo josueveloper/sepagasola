@@ -172,6 +172,43 @@ prueba('un enlace dañado o un ancla no rompen la página', async () => {
   await p.context().close();
 });
 
+prueba('en celular, un resumen fijo muestra el resultado mientras llenas el formulario', async () => {
+  const p = await abrir({ movil: true });
+  const barra = () => p.evaluate(() => { const b = document.getElementById('sticky'), r = b.getBoundingClientRect(); return { visible: !b.hidden && r.height > 0, texto: b.innerText.replace(/\s+/g, ' ').trim(), top: r.top, no: b.classList.contains('no') }; });
+  assert.strictEqual((await barra()).visible, false, 'arriba de la página no estorba');
+  await p.evaluate(() => document.getElementById('renta').scrollIntoView({ block: 'center' })); await p.waitForTimeout(200);
+  let b = await barra();
+  assert.strictEqual(b.visible, true); assert.strictEqual(b.top, 0);
+  assert.strictEqual(b.texto, 'Se paga sola en 5 años y 7 meses Mensualidad inicial $14,819');
+  await escribir(p, 'renta', 12000); b = await barra();
+  assert.strictEqual(b.texto, 'Se paga sola en ' + (await ver(p)).veredicto + ' Mensualidad inicial $14,819', 'se actualiza al escribir');
+  assert.notStrictEqual((await ver(p)).veredicto, '5 años y 7 meses');
+  await escribir(p, 'renta', 100); await escribir(p, 'pago', 0); b = await barra();
+  assert.match(b.texto, /No llega en el plazo/); assert.strictEqual(b.no, true);
+  // tocarlo lleva al resultado y, ya con el resultado a la vista, se quita
+  await p.click('#sticky'); await p.waitForTimeout(900);
+  assert.strictEqual((await barra()).visible, false);
+  assert.ok(await p.evaluate(() => { const r = document.getElementById('verdict').getBoundingClientRect(); return r.top >= -1 && r.top < innerHeight / 2; }), 'el resultado quedó arriba');
+  assert.strictEqual((await ver(p)).desborde, 0);
+  await p.context().close();
+
+  const d = await abrir();
+  await d.evaluate(() => scrollTo(0, 500)); await d.waitForTimeout(200);
+  assert.strictEqual(await d.evaluate(() => getComputedStyle(document.getElementById('sticky')).display), 'none', 'en computadora no hace falta');
+  await d.context().close();
+});
+
+prueba('la marca "Se paga sola" aparece en la página, el título y el manifiesto', async () => {
+  const p = await abrir();
+  const t = await p.evaluate(() => ({ titulo: document.title, marca: document.querySelector('.brand').textContent.trim(), sitio: document.querySelector('meta[property="og:site_name"]').content, h1: document.querySelector('h1').textContent }));
+  assert.match(t.titulo, /^Simulador de crédito hipotecario.* \| Se paga sola$/); assert.strictEqual(t.marca, 'Se paga sola'); assert.strictEqual(t.sitio, 'Se paga sola');
+  assert.match(t.h1, /Simulador de crédito hipotecario/);
+  const m = JSON.parse(fs.readFileSync(path.join(RAIZ, 'manifest.webmanifest'), 'utf8'));
+  assert.strictEqual(m.short_name, 'Se paga sola');
+  for (const f of ['privacidad.html', 'aviso-legal.html', '404.html']) assert.match(fs.readFileSync(path.join(RAIZ, f), 'utf8'), /<title>[^<]* \| Se paga sola<\/title>/, f);
+  await p.context().close();
+});
+
 (async () => {
   await servir(); browser = await chromium.launch();
   for (const [nombre, fn] of pruebas) {

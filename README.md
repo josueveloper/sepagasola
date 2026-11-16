@@ -1,4 +1,4 @@
-# Simulador de crédito hipotecario para México
+# Se paga sola: simulador de crédito hipotecario para México
 
 Página estática que calcula la mensualidad de un crédito con banco, Apoyo Infonavit o Cofinavit, compara formas de aplicar abonos a capital y estima cuánto tarda la renta en cubrir la mensualidad. Los cálculos corren en el navegador; no hay servidor ni paso de compilación.
 
@@ -44,5 +44,6 @@ Después configura el dominio en GitHub Pages y da de alta el sitio nuevo en Goo
 ## Mantenimiento
 
 - **Datos de Infonavit:** las tasas y reglas cambian. Revisa cada año las preguntas frecuentes de `index.html` y su copia en el JSON-LD.
-- **Publicidad o analítica:** antes de activarlas, actualiza `privacidad.html`.
+- **Analítica:** Cloudflare Web Analytics, activada en el panel de Cloudflare (*Automatic setup*): Cloudflare inserta el script al servir la página, por eso no aparece en el código. No usa cookies y no recibe lo que va después del `#`. Está descrita en `privacidad.html`.
+- **Publicidad u otra medición:** antes de activarlas, actualiza `privacidad.html`.
 - **Textos legales:** son una base y no los ha revisado un abogado.
