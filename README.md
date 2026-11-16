@@ -25,6 +25,10 @@ El cálculo vive en el bloque `<script id="logica">` de `index.html`, separado d
 
 "Copiar enlace" (en celular, "Compartir") arma una dirección como `https://sepagasola.com/#precio=2500000&fin=cofinavit`, que solo lleva los valores distintos al ejemplo. Van después del `#` para que no lleguen al servidor. Quien lo abre ve ese escenario sin perder el suyo guardado, hasta que cambie algo. Si agregas un campo al simulador, añádelo a `DEFAULTS` y a `NUM_KEYS` o `ENUMS` para que también viaje en el enlace.
 
+## Cómo está armada la página
+
+Arriba van el resultado y la gráfica; debajo, los cinco controles con deslizador (`RANGES`) y el tipo de financiamiento. Lo demás está en "Ajustes avanzados", que avisa cuántos valores difieren del ejemplo (lista `ADV`) y se abre solo si ya hay cambios. Los montos en pesos se escriben con separador de miles (lista `MONEY`). Un campo nuevo va en esas listas según le toque.
+
 ## Publicar
 
 GitHub Pages publica la rama `main`, así que cada push a `main` sale directo al sitio.
