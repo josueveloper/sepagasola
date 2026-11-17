@@ -28,7 +28,7 @@ const servidor = http.createServer((req, res) => {
   const browser = await chromium.launch();
 
   const og = await browser.newPage({ viewport: { width: 1200, height: 630 } });
-  await og.goto(BASE + '_graficos/og-image.html'); await og.evaluate(() => document.fonts.ready); await og.waitForTimeout(200);
+  await og.goto(BASE + '_graficos/og-image.html'); await og.waitForSelector('body[data-listo]'); await og.evaluate(() => document.fonts.ready); await og.waitForTimeout(200);
   await og.screenshot({ path: path.join(RAIZ, 'og-image.png') });
   console.log('og-image.png');
 

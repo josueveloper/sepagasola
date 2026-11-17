@@ -37,21 +37,41 @@ svg.chart{display:block;margin-top:8px}
 </div>
 <div class="card">
   <div class="k">Se paga sola en</div>
-  <div class="big">5 años y 7 meses</div>
+  <div class="big" id="big">—</div>
   <div class="legend"><span><i style="background:#127f55"></i>Mensualidad</span><span><i style="background:#c97c22"></i>Renta neta</span></div>
   <svg class="chart" width="380" height="230" viewBox="0 0 380 230">
     <defs><linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#127f55" stop-opacity=".22"/><stop offset="1" stop-color="#127f55" stop-opacity=".02"/></linearGradient></defs>
     <g stroke="#ece7df" stroke-width="1"><line x1="0" x2="380" y1="20" y2="20"/><line x1="0" x2="380" y1="70" y2="70"/><line x1="0" x2="380" y1="120" y2="120"/><line x1="0" x2="380" y1="170" y2="170"/></g>
     <line x1="0" x2="380" y1="220" y2="220" stroke="#e6e0d6"/>
-    <path d="M0 66 C 90 78, 170 100, 228 128 S 340 196, 380 220 L380 220 L0 220Z" fill="url(#a)"/>
-    <path d="M0 66 C 90 78, 170 100, 228 128 S 340 196, 380 220" fill="none" stroke="#127f55" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M0 152 H34 V146 H68 V140 H102 V134 H136 V128 H170 V122 H204 V117 H238 V111 H272 V105 H306 V99 H340 V93 H380" fill="none" stroke="#c97c22" stroke-width="3.5" stroke-linejoin="round"/>
-    <line x1="182" x2="182" y1="128" y2="220" stroke="#5d6a63" stroke-opacity=".5"/>
-    <circle cx="182" cy="119" r="15" fill="#127f55" fill-opacity=".16"/>
-    <circle cx="182" cy="119" r="7" fill="#127f55" stroke="#fff" stroke-width="3"/>
-    <rect x="122" y="70" width="120" height="30" rx="15" fill="#14211b"/>
-    <text x="182" y="90" text-anchor="middle" font-family="Figtree" font-weight="700" font-size="15" fill="#fff">Se paga sola</text>
+    <path id="area" fill="url(#a)"/>
+    <path id="renta" fill="none" stroke="#c97c22" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path id="pago" fill="none" stroke="#127f55" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <line id="guia" stroke="#5d6a63" stroke-opacity=".5"/>
+    <circle id="halo" r="15" fill="#127f55" fill-opacity=".16"/>
+    <circle id="punto" r="7" fill="#127f55" stroke="#fff" stroke-width="3"/>
+    <rect id="pill" width="120" height="30" rx="15" fill="#14211b"/>
+    <text id="pill-t" text-anchor="middle" font-family="Figtree" font-weight="700" font-size="15" fill="#fff">Se paga sola</text>
   </svg>
 </div>
+<script>
+/* La gráfica usa el cálculo real del sitio con los valores del ejemplo: lee el bloque <script id="logica"> de index.html,
+   así el cruce cae justo donde la renta alcanza a la mensualidad y el texto coincide con lo que muestra la página. */
+fetch('../index.html').then(r => r.text()).then(html => {
+  const L = new Function(html.match(/<script id="logica">([\s\S]*?)<\/script>/)[1] + ';return SimLogica;')();
+  const s = L.simulate(L.DEFAULTS), ms = s.months, n = ms.length, be = s.be;
+  const W = 380, base = 220, top = 20, maxY = 20000;   // mismas líneas guía: $20 mil arriba, cada $5 mil
+  const x = m => m / (n - 1) * W, y = v => base - Math.max(0, v) / maxY * (base - top);
+  const path = k => ms.map((r, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(r[k]).toFixed(1)).join(' ');
+  const set = (id, at) => Object.entries(at).forEach(([k, v]) => document.getElementById(id).setAttribute(k, v));
+  set('pago', { d: path('pay') }); set('renta', { d: path('target') });
+  set('area', { d: path('pay') + ` L${W} ${base} L0 ${base} Z` });
+  const bx = x(be), by = y(ms[be].pay);
+  set('guia', { x1: bx, x2: bx, y1: by + 8, y2: base }); set('halo', { cx: bx, cy: by }); set('punto', { cx: bx, cy: by });
+  set('pill', { x: bx - 60, y: by - 52 }); set('pill-t', { x: bx, y: by - 32 });
+  const a = Math.floor(be / 12), m = be % 12;
+  document.getElementById('big').textContent = [a ? a + (a === 1 ? ' año' : ' años') : '', m ? m + (m === 1 ? ' mes' : ' meses') : ''].filter(Boolean).join(' y ');
+  document.body.dataset.listo = '1';
+});
+</script>
 </body>
 </html>
