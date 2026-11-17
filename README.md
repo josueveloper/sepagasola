@@ -41,9 +41,17 @@ Reemplaza `sepagasola.com` en:
 - `index.html`: `canonical`, Open Graph, Twitter Card y JSON-LD
 - `privacidad.html` y `aviso-legal.html`: `canonical`
 - `robots.txt` y `sitemap.xml`
-- `og-image.png`: el dominio forma parte de la imagen, hay que regenerarla
+- `og-image.png`: el dominio forma parte de la imagen; cámbialo en `_graficos/og-image.html` y regénerala (ver abajo)
 
 Después configura el dominio en GitHub Pages y da de alta el sitio nuevo en Google Search Console.
+
+## Imagen para compartir e íconos
+
+`og-image.png` y los íconos PNG se generan con `node _graficos/generar.js`: la imagen sale de `_graficos/og-image.html` y los íconos de `favicon.svg` (redondeados) y `_graficos/icono-maskable.svg` (cuadro completo, para Android e iOS). GitHub Pages no publica las carpetas que empiezan con `_`.
+
+## Colores
+
+Los colores están como variables en `:root` de `index.html` (y una versión corta en `paginas.css`), con su juego propio para modo oscuro. Los de la gráfica (`--s-pay`, `--s-rent`, `--s-inf`) se eligieron con un validador de paleta (contraste y daltonismo) contra el fondo de las tarjetas; si los cambias, vuelve a validarlos. En oscuro, verde y ocre necesitan una pista además del color, así que la gráfica conserva la leyenda y las etiquetas sobre cada línea.
 
 ## Mantenimiento
 

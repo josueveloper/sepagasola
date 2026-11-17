@@ -26,10 +26,11 @@ function servir() {
   return new Promise(ok => servidor.listen(0, '127.0.0.1', () => { BASE = 'http://localhost:' + servidor.address().port + '/'; ok(); }));
 }
 
-/* Abre la página. hash: enlace compartido; guardado: lo que hay en localStorage antes de cargar. */
-async function abrir({ hash = '', guardado, movil = false, ancho } = {}) {
+/* Abre la página. hash: enlace compartido; guardado: lo que hay en localStorage antes de cargar.
+   Por defecto con movimiento reducido, para leer los resultados sin esperar a las animaciones; animar: true las deja correr. */
+async function abrir({ hash = '', guardado, movil = false, ancho, animar = false, oscuro = false } = {}) {
   const viewport = ancho ? { width: ancho, height: 900 } : movil ? PHONE : DESK;
-  const ctx = await browser.newContext({ viewport, isMobile: movil, hasTouch: movil, permissions: ['clipboard-read', 'clipboard-write'] });
+  const ctx = await browser.newContext({ viewport, isMobile: movil, hasTouch: movil, permissions: ['clipboard-read', 'clipboard-write'], reducedMotion: animar ? 'no-preference' : 'reduce', colorScheme: oscuro ? 'dark' : 'light' });
   const p = await ctx.newPage(); p.errores = [];
   p.on('pageerror', e => p.errores.push(e.message)); p.on('console', m => m.type() === 'error' && p.errores.push(m.text()));
   if (guardado !== undefined) await p.addInitScript(([k, v]) => { if (!sessionStorage.getItem('sembrado')) { sessionStorage.setItem('sembrado', '1'); localStorage.setItem(k, v); } }, [KEY, typeof guardado === 'string' ? guardado : JSON.stringify(guardado)]);
@@ -293,6 +294,92 @@ prueba('un resumen fijo muestra el resultado cuando ya no se ve, en celular y co
   await d.setViewportSize({ width: 1280, height: 500 }); await d.evaluate(() => document.querySelector('footer').scrollIntoView({ block: 'end' })); await d.waitForTimeout(200);
   assert.strictEqual((await barra(d)).visible, false, 'fuera del simulador (preguntas frecuentes) se quita');
   await d.context().close();
+});
+
+prueba('al cargar, el número del resultado cuenta hasta su valor y la gráfica se dibuja; con movimiento reducido, nada se anima', async () => {
+  const ctx = await browser.newContext({ viewport: DESK, reducedMotion: 'no-preference' });
+  const p = await ctx.newPage(); const errores = []; p.on('pageerror', e => errores.push(e.message));
+  // anota cada texto que toma el número y si la gráfica empezó con la animación
+  await p.addInitScript(() => {
+    window.__textos = []; window.__intro = false;
+    new MutationObserver(() => { const b = document.getElementById('v-big'), c = document.getElementById('chart');
+      if (b && window.__textos[window.__textos.length - 1] !== b.textContent) window.__textos.push(b.textContent);
+      if (c && c.classList.contains('intro')) window.__intro = true; }).observe(document, { subtree: true, childList: true, characterData: true, attributes: true });
+  });
+  await p.goto(BASE); await p.waitForTimeout(2000);
+  const r = await p.evaluate(() => ({ textos: window.__textos.filter(t => t !== '—'), intro: window.__intro, ahora: document.getElementById('v-big').textContent, sigue: document.getElementById('chart').classList.contains('intro') }));
+  assert.deepStrictEqual(errores, []);
+  assert.ok(r.textos.length >= 5, 'pasa por varios valores: ' + r.textos.join(' | '));
+  assert.strictEqual(r.textos[0], '0 meses'); assert.strictEqual(r.ahora, '5 años y 7 meses');
+  const meses = t => { const a = /(\d+) años?/.exec(t), m = /(\d+) mes/.exec(t); return (a ? +a[1] * 12 : 0) + (m ? +m[1] : 0); };
+  assert.ok(r.textos.every((t, i) => i === 0 || meses(t) >= meses(r.textos[i - 1])), 'solo sube');
+  assert.strictEqual(r.intro, true); assert.strictEqual(r.sigue, false, 'la animación de la gráfica termina');
+  // después de cargar, los cambios se ven directo
+  await p.fill('#pago', '30000'); await p.waitForTimeout(60);
+  assert.notStrictEqual(await p.textContent('#v-big'), '5 años y 7 meses');
+  assert.ok(!/^0 meses$/.test(await p.textContent('#v-big')));
+  await ctx.close();
+
+  const q = await abrir();
+  assert.strictEqual(await q.textContent('#v-big'), '5 años y 7 meses', 'con movimiento reducido el valor está desde el inicio');
+  assert.strictEqual(await q.evaluate(() => document.getElementById('chart').classList.contains('intro')), false);
+  await q.context().close();
+});
+
+prueba('gráfica: etiquetas en las líneas, cruce marcado y leyenda', async () => {
+  for (const [hash, movil] of [['', false], ['', true], ['#fin=cofinavit', false], ['#fin=cofinavit', true]]) {
+    const p = await abrir({ hash, movil });
+    const g = await p.evaluate(() => {
+      const svg = document.getElementById('chart'), caja = svg.getBoundingClientRect();
+      const etiquetas = [...svg.querySelectorAll('.lbl')].map(t => { const r = t.getBoundingClientRect(); return { t: t.textContent, r: { l: r.left, r: r.right, t: r.top, b: r.bottom } }; });
+      const pill = svg.querySelector('.pill rect').getBoundingClientRect(), txt = svg.querySelector('.pill text').getBoundingClientRect();
+      const choca = (a, b) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+      return {
+        etiquetas: etiquetas.map(e => e.t), adentro: [...etiquetas.map(e => e.r), { l: pill.left, r: pill.right, t: pill.top, b: pill.bottom }].every(r => r.l >= caja.left - 1 && r.r <= caja.right + 1 && r.t >= caja.top - 1 && r.b <= caja.bottom + 1),
+        choques: etiquetas.some((a, i) => etiquetas.some((b, j) => i < j && choca(a.r, b.r))) || etiquetas.some(e => choca(e.r, { l: pill.left, r: pill.right, t: pill.top, b: pill.bottom })),
+        pillCabe: txt.left >= pill.left && txt.right <= pill.right, leyenda: [...document.querySelectorAll('.legend > span')].filter(e => e.checkVisibility()).map(e => e.textContent),
+        degradado: !!svg.querySelector('linearGradient#g-pay'), cruce: svg.querySelectorAll('.pop circle').length, lineas: svg.querySelectorAll('path.ln').length,
+      };
+    });
+    const cofi = hash.includes('cofinavit');
+    assert.deepStrictEqual(p.errores, []);
+    assert.deepStrictEqual(g.etiquetas, cofi ? ['Renta neta', 'Mensualidad', 'Infonavit'] : ['Renta neta', 'Mensualidad'], `${hash} ${movil}`);
+    assert.strictEqual(g.adentro, true, 'las etiquetas no se salen de la gráfica'); assert.strictEqual(g.choques, false, 'las etiquetas no se enciman');
+    assert.strictEqual(g.pillCabe, true, '"Se paga sola" cabe en su etiqueta');
+    assert.deepStrictEqual(g.leyenda, cofi ? ['Mensualidad total', 'Parte Infonavit', 'Renta neta'] : ['Mensualidad total', 'Renta neta'], 'la leyenda sigue');
+    assert.strictEqual(g.degradado, true); assert.strictEqual(g.cruce, 2); assert.strictEqual(g.lineas, cofi ? 3 : 2);
+    await p.context().close();
+  }
+  // con la meta en renta completa, la etiqueta lo dice; si no llega, no hay cruce
+  const p = await abrir({ hash: '#meta=bruta' });
+  assert.deepStrictEqual(await p.evaluate(() => [...document.querySelectorAll('#chart .lbl')].map(t => t.textContent)), ['Renta', 'Mensualidad']);
+  await escribir(p, 'pago', 0); await escribir(p, 'renta', 100);
+  assert.strictEqual(await p.evaluate(() => document.querySelectorAll('#chart .pill').length), 0);
+  assert.strictEqual((await ver(p)).veredicto, 'No llega en el plazo');
+  assert.strictEqual(await p.evaluate(() => document.getElementById('verdict').classList.contains('no')), true);
+  await p.context().close();
+});
+
+prueba('deslizadores: la parte llena sigue al valor', async () => {
+  const p = await abrir();
+  const lleno = id => p.evaluate(id => document.getElementById(id + '-r').style.getPropertyValue('--p'), id);
+  // precio: (1,800,000 − 300,000) / (10,000,000 − 300,000)
+  assert.strictEqual(parseFloat(await lleno('precio')).toFixed(2), (1500000 / 9700000 * 100).toFixed(2));
+  await p.evaluate(() => { const r = document.getElementById('eng-r'); r.value = 60; r.dispatchEvent(new Event('input', { bubbles: true })); });
+  assert.strictEqual(await lleno('eng'), '100%');
+  await escribir(p, 'tasa', 5); assert.strictEqual(await lleno('tasa'), '0%');
+  await escribir(p, 'precio', 20000000); assert.strictEqual(await lleno('precio'), '100%', 'si el máximo se estira, queda lleno');
+  await p.context().close();
+});
+
+prueba('modo oscuro: sin errores, sin desborde y con sus propios colores', async () => {
+  for (const movil of [false, true]) {
+    const p = await abrir({ oscuro: true, movil, hash: '#fin=cofinavit' }), v = await ver(p);
+    assert.deepStrictEqual(p.errores, []); assert.strictEqual(v.desborde, 0);
+    const c = await p.evaluate(() => { const cs = getComputedStyle(document.documentElement); return { fondo: getComputedStyle(document.body).backgroundColor, pay: cs.getPropertyValue('--s-pay').trim(), track: cs.getPropertyValue('--track').trim(), panel: cs.getPropertyValue('--panel').trim() }; });
+    assert.strictEqual(c.fondo, 'rgb(12, 18, 16)'); assert.strictEqual(c.pay, '#2a9d6c'); assert.notStrictEqual(c.track, c.panel, 'el riel se distingue de la tarjeta');
+    await p.context().close();
+  }
 });
 
 prueba('la marca "Se paga sola" aparece en la página, el título y el manifiesto', async () => {

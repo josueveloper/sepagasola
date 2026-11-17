@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<title>Imagen para compartir</title>
+<!-- Fuente de og-image.png (1200×630). Se genera con: node _graficos/generar.js -->
+<style>
+@font-face{font-family:"Familjen Grotesk";font-weight:400 700;src:url(../fonts/familjen-grotesk-latin.woff2) format("woff2")}
+@font-face{font-family:"Figtree";font-weight:300 900;src:url(../fonts/figtree-latin.woff2) format("woff2")}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:1200px;height:630px;overflow:hidden;position:relative;color:#fff;font-family:"Figtree",sans-serif;
+  background:radial-gradient(900px 600px at 105% -10%,rgba(255,255,255,.14),transparent 60%),linear-gradient(150deg,#17644b,#0b3527 70%)}
+.mark{position:absolute;right:-70px;bottom:-90px;width:440px;height:440px;opacity:.08}
+.left{position:absolute;left:72px;top:64px;bottom:64px;width:560px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:16px;font-family:"Familjen Grotesk";font-weight:700;font-size:34px;letter-spacing:-.015em}
+.brand img{width:60px;height:60px;border-radius:15px;box-shadow:0 6px 18px -6px rgba(0,0,0,.5)}
+h1{font-family:"Familjen Grotesk";font-weight:700;font-size:64px;line-height:1.02;letter-spacing:-.03em;margin:54px 0 0}
+p{font-size:25px;line-height:1.35;color:rgba(255,255,255,.82);margin:20px 0 0}
+.url{margin-top:auto;font-size:24px;font-weight:600;color:#9fe6c3;letter-spacing:.01em}
+.card{position:absolute;right:64px;top:117px;width:440px;height:396px;background:#fff;border-radius:28px;color:#14211b;padding:30px 30px 24px;
+  box-shadow:0 30px 60px -24px rgba(0,0,0,.55)}
+.k{font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5d6a63}
+.big{font-family:"Familjen Grotesk";font-weight:700;font-size:50px;letter-spacing:-.025em;color:#127f55;margin-top:6px;line-height:1}
+.legend{display:flex;gap:18px;font-size:15px;color:#5d6a63;margin-top:18px}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:7px}
+svg.chart{display:block;margin-top:8px}
+</style>
+</head>
+<body>
+<svg class="mark" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M32 9 7 30h7v25h36V30h7z"/><path d="M21 45l8-8 6 5 9-11"/></svg>
+<div class="left">
+  <div class="brand"><img src="../favicon.svg" alt="">Se paga sola</div>
+  <h1>¿En cuánto tiempo la renta paga tu casa?</h1>
+  <p>Simulador de crédito hipotecario para México, con banco, Apoyo Infonavit o Cofinavit.</p>
+  <div class="url">sepagasola.com</div>
+</div>
+<div class="card">
+  <div class="k">Se paga sola en</div>
+  <div class="big">5 años y 7 meses</div>
+  <div class="legend"><span><i style="background:#127f55"></i>Mensualidad</span><span><i style="background:#c97c22"></i>Renta neta</span></div>
+  <svg class="chart" width="380" height="230" viewBox="0 0 380 230">
+    <defs><linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#127f55" stop-opacity=".22"/><stop offset="1" stop-color="#127f55" stop-opacity=".02"/></linearGradient></defs>
+    <g stroke="#ece7df" stroke-width="1"><line x1="0" x2="380" y1="20" y2="20"/><line x1="0" x2="380" y1="70" y2="70"/><line x1="0" x2="380" y1="120" y2="120"/><line x1="0" x2="380" y1="170" y2="170"/></g>
+    <line x1="0" x2="380" y1="220" y2="220" stroke="#e6e0d6"/>
+    <path d="M0 66 C 90 78, 170 100, 228 128 S 340 196, 380 220 L380 220 L0 220Z" fill="url(#a)"/>
+    <path d="M0 66 C 90 78, 170 100, 228 128 S 340 196, 380 220" fill="none" stroke="#127f55" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M0 152 H34 V146 H68 V140 H102 V134 H136 V128 H170 V122 H204 V117 H238 V111 H272 V105 H306 V99 H340 V93 H380" fill="none" stroke="#c97c22" stroke-width="3.5" stroke-linejoin="round"/>
+    <line x1="182" x2="182" y1="128" y2="220" stroke="#5d6a63" stroke-opacity=".5"/>
+    <circle cx="182" cy="119" r="15" fill="#127f55" fill-opacity=".16"/>
+    <circle cx="182" cy="119" r="7" fill="#127f55" stroke="#fff" stroke-width="3"/>
+    <rect x="122" y="70" width="120" height="30" rx="15" fill="#14211b"/>
+    <text x="182" y="90" text-anchor="middle" font-family="Figtree" font-weight="700" font-size="15" fill="#fff">Se paga sola</text>
+  </svg>
+</div>
+</body>
+</html>
