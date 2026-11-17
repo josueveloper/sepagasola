@@ -1,7 +1,8 @@
 @font-face{font-family:"Familjen Grotesk";font-style:normal;font-weight:400 700;font-display:swap;src:url(/fonts/familjen-grotesk-latin.woff2) format("woff2")}
 @font-face{font-family:"Figtree";font-style:normal;font-weight:300 900;font-display:swap;src:url(/fonts/figtree-latin.woff2) format("woff2")}
 :root{--bg:#fbf3e8;--panel:#fffaf3;--fg:#2b1d14;--muted:#7a6656;--line:#efdfcc;--accent:#a2461f;--edge:rgba(120,70,30,.08);--shadow:0 1px 2px rgba(90,50,20,.06),0 14px 32px -16px rgba(120,60,20,.28);--glow:rgba(214,120,60,.13)}
-@media (prefers-color-scheme:dark){:root{--bg:#17110d;--panel:#211913;--fg:#f3e7da;--muted:#b39e8c;--line:#3a2c22;--accent:#f0a07a;--edge:#33271e;--shadow:none;--glow:rgba(214,120,60,.10);color-scheme:dark}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17110d;--panel:#211913;--fg:#f3e7da;--muted:#b39e8c;--line:#3a2c22;--accent:#f0a07a;--edge:#33271e;--shadow:none;--glow:rgba(214,120,60,.10);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17110d;--panel:#211913;--fg:#f3e7da;--muted:#b39e8c;--line:#3a2c22;--accent:#f0a07a;--edge:#33271e;--shadow:none;--glow:rgba(214,120,60,.10);color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:radial-gradient(1100px 420px at 50% -220px,var(--glow),transparent 70%) no-repeat,var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;font:15px/1.55 "Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;padding:24px 16px 40px}
 main,footer{max-width:720px;margin:0 auto}
