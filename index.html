@@ -116,6 +116,10 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>
+/* Tema: el que eligió la persona con el botón (guardado) o, si no ha elegido, el del sistema. Se aplica antes de pintar para que no parpadee. */
+try{var t=localStorage.getItem('simHipotecaTema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="application-name" content="Se paga sola">
 <meta name="apple-mobile-web-app-title" content="Se paga sola">
@@ -384,6 +388,16 @@ td.neg{color:var(--good)}
 .foot p{margin:0}
 .foot nav{margin-top:6px}
 .foot a{color:var(--link)}
+/* Botón de tema: arriba a la derecha; muestra la luna en claro y el sol en oscuro */
+header{position:relative}
+.theme-btn{position:absolute;top:-2px;right:0;width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;cursor:pointer;transition:border-color .15s}
+.theme-btn:hover{border-color:var(--muted)}
+.theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.theme-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.theme-btn .i-sun{display:none}
+:root[data-theme="dark"] .theme-btn .i-sun{display:block}
+:root[data-theme="dark"] .theme-btn .i-moon{display:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .theme-btn .i-sun{display:block}:root:not([data-theme="light"]) .theme-btn .i-moon{display:none}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -393,6 +407,7 @@ td.neg{color:var(--good)}
 <div class="wrap">
   <header>
     <a class="brand" href="./"><img src="favicon.svg" width="30" height="30" alt="">Se paga sola</a>
+    <button type="button" class="theme-btn" id="theme" aria-label="Cambiar a tema oscuro" title="Cambiar a tema oscuro"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg></button>
     <h1>Simulador de crédito hipotecario para México</h1>
     <p>Ve en cuánto tiempo la renta cubre tu mensualidad, con banco, Apoyo Infonavit o Cofinavit. Los números son un ejemplo: pon los tuyos.</p>
   </header>
@@ -1105,6 +1120,25 @@ var SimLogica=(function(){
       $('verdict').scrollIntoView({behavior:calm?'auto':'smooth',block:'start'});
     });
   }
+
+  // Botón de tema: cambia entre claro y oscuro y lo recuerda. Si nunca se usa, la página sigue al sistema.
+  var THEME_KEY='simHipotecaTema', darkMQ=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null, root=document.documentElement;
+  var themeMetas=[].slice.call(document.querySelectorAll('meta[name="theme-color"]')), themeColors={};
+  themeMetas.forEach(function(m){themeColors[/dark/.test(m.media)?'dark':'light']=m.content;});
+  function currentTheme(){return root.getAttribute('data-theme')||(darkMQ&&darkMQ.matches?'dark':'light');}
+  function syncTheme(){
+    var t=currentTheme(), forced=root.getAttribute('data-theme'), txt=t==='dark'?'Cambiar a tema claro':'Cambiar a tema oscuro';
+    $('theme').setAttribute('aria-label',txt); $('theme').title=txt;
+    // la barra del navegador toma el color del tema que se ve, no solo el del sistema
+    themeMetas.forEach(function(m){m.content=forced?themeColors[forced]:themeColors[/dark/.test(m.media)?'dark':'light'];});
+  }
+  $('theme').addEventListener('click',function(){
+    var t=currentTheme()==='dark'?'light':'dark';
+    root.setAttribute('data-theme',t); try{localStorage.setItem(THEME_KEY,t);}catch(e){}
+    syncTheme();
+  });
+  if(darkMQ){if(darkMQ.addEventListener)darkMQ.addEventListener('change',syncTheme);else if(darkMQ.addListener)darkMQ.addListener(syncTheme);}
+  syncTheme();
 
   // Enlace para compartir: en celular abre el menú de compartir; en computadora lo copia
   var canShare=!!navigator.share&&!!window.matchMedia&&matchMedia('(pointer:coarse)').matches, shareT;

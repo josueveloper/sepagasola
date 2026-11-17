@@ -9,6 +9,10 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="stylesheet" href="/paginas.css">
+<script>
+/* Tema: el que se eligió con el botón del simulador (guardado) o, si no ha elegido, el del sistema. Se aplica antes de pintar para que no parpadee. */
+try{var t=localStorage.getItem('simHipotecaTema');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+</script>
 </head>
 <body>
 <main>

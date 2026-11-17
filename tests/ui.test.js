@@ -296,6 +296,45 @@ prueba('un resumen fijo muestra el resultado cuando ya no se ve, en celular y co
   await d.context().close();
 });
 
+prueba('botón de tema: cambia entre claro y oscuro, lo recuerda y lo respetan las demás páginas', async () => {
+  // colores de cada tema tal como los pinta el sistema
+  const fondo = async (oscuro, ruta = '') => { const p = await abrir({ oscuro, hash: ruta }); const c = await p.evaluate(() => getComputedStyle(document.body).backgroundColor); await p.context().close(); return c; };
+  const CLARO = await fondo(false), OSCURO = await fondo(true);
+  assert.notStrictEqual(CLARO, OSCURO);
+  const estado = p => p.evaluate(() => { const b = document.getElementById('theme'), r = b.getBoundingClientRect();
+    return { fondo: getComputedStyle(document.body).backgroundColor, tema: document.documentElement.getAttribute('data-theme'), guardado: localStorage.getItem('simHipotecaTema'),
+      etiqueta: b.getAttribute('aria-label'), icono: [...b.querySelectorAll('svg')].filter(s => s.checkVisibility()).map(s => s.getAttribute('class')).join(),
+      metas: [...document.querySelectorAll('meta[name="theme-color"]')].map(m => m.content), visible: r.width >= 36 && r.right <= innerWidth, desborde: document.documentElement.scrollWidth - innerWidth }; });
+
+  for (const movil of [false, true]) {
+    const p = await abrir({ movil });
+    let e = await estado(p);
+    assert.deepStrictEqual([e.fondo, e.tema, e.guardado, e.etiqueta, e.icono], [CLARO, null, null, 'Cambiar a tema oscuro', 'i-moon'], 'sin elegir, sigue al sistema');
+    assert.strictEqual(e.visible, true); assert.strictEqual(e.desborde, 0);
+    const metasSistema = e.metas;
+    await p.click('#theme'); e = await estado(p);
+    assert.deepStrictEqual([e.fondo, e.tema, e.guardado, e.etiqueta, e.icono], [OSCURO, 'dark', 'dark', 'Cambiar a tema claro', 'i-sun']);
+    assert.ok(e.metas.every(m => m === metasSistema[1]), 'la barra del navegador toma el color oscuro');
+    // la gráfica cambia de colores sin recalcular
+    assert.strictEqual(await p.evaluate(() => getComputedStyle(document.querySelector('#chart path.ln')).stroke !== ''), true);
+    await p.reload(); await p.waitForTimeout(150); e = await estado(p);
+    assert.deepStrictEqual([e.fondo, e.tema], [OSCURO, 'dark'], 'se recuerda al volver');
+    await p.goto(BASE + 'privacidad.html');
+    assert.strictEqual(await p.evaluate(() => getComputedStyle(document.body).backgroundColor) !== await (async () => { const q = await abrir(); await q.goto(BASE + 'privacidad.html'); const c = await q.evaluate(() => getComputedStyle(document.body).backgroundColor); await q.context().close(); return c; })(), true, 'privacidad sigue la elección');
+    await p.goto(BASE); await p.waitForTimeout(150);
+    await p.click('#theme'); e = await estado(p);
+    assert.deepStrictEqual([e.fondo, e.tema, e.guardado, e.icono], [CLARO, 'light', 'light', 'i-moon']);
+    assert.deepStrictEqual(p.errores, []);
+    await p.context().close();
+  }
+  // con el sistema en oscuro, la elección "claro" manda
+  const q = await abrir({ oscuro: true, guardado: undefined });
+  await q.evaluate(() => localStorage.setItem('simHipotecaTema', 'light')); await q.reload(); await q.waitForTimeout(150);
+  const e = await estado(q);
+  assert.deepStrictEqual([e.fondo, e.etiqueta], [CLARO, 'Cambiar a tema oscuro']);
+  await q.context().close();
+});
+
 prueba('al cargar, el número del resultado cuenta hasta su valor y la gráfica se dibuja; con movimiento reducido, nada se anima', async () => {
   const ctx = await browser.newContext({ viewport: DESK, reducedMotion: 'no-preference' });
   const p = await ctx.newPage(); const errores = []; p.on('pageerror', e => errores.push(e.message));
