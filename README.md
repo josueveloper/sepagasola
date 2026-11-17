@@ -51,7 +51,7 @@ Después configura el dominio en GitHub Pages y da de alta el sitio nuevo en Goo
 
 ## Colores
 
-Los colores están como variables en `:root` de `index.html` (y una versión corta en `paginas.css`), con su juego propio para modo oscuro. Los de la gráfica (`--s-pay`, `--s-rent`, `--s-inf`) se eligieron con un validador de paleta (contraste y daltonismo) contra el fondo de las tarjetas; si los cambias, vuelve a validarlos. En oscuro, verde y ocre necesitan una pista además del color, así que la gráfica conserva la leyenda y las etiquetas sobre cada línea.
+Los colores están como variables en `:root` de `index.html` (y una versión corta en `paginas.css`), con su juego propio para modo oscuro. El terracota es de la interfaz; en la gráfica la renta va en ocre, porque terracota y verde se confunden con daltonismo. Los de la gráfica (`--s-pay`, `--s-rent`, `--s-inf`) se eligieron con un validador de paleta (contraste y daltonismo) contra el fondo de las tarjetas; si los cambias, vuelve a validarlos. En oscuro, verde y ocre necesitan una pista además del color, así que la gráfica conserva la leyenda y las etiquetas sobre cada línea.
 
 ## Mantenimiento
 

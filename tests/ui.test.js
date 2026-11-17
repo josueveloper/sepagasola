@@ -377,7 +377,9 @@ prueba('modo oscuro: sin errores, sin desborde y con sus propios colores', async
     const p = await abrir({ oscuro: true, movil, hash: '#fin=cofinavit' }), v = await ver(p);
     assert.deepStrictEqual(p.errores, []); assert.strictEqual(v.desborde, 0);
     const c = await p.evaluate(() => { const cs = getComputedStyle(document.documentElement); return { fondo: getComputedStyle(document.body).backgroundColor, pay: cs.getPropertyValue('--s-pay').trim(), track: cs.getPropertyValue('--track').trim(), panel: cs.getPropertyValue('--panel').trim() }; });
-    assert.strictEqual(c.fondo, 'rgb(12, 18, 16)'); assert.strictEqual(c.pay, '#2a9d6c'); assert.notStrictEqual(c.track, c.panel, 'el riel se distingue de la tarjeta');
+    assert.strictEqual(c.fondo, 'rgb(23, 17, 13)'); assert.strictEqual(c.pay, '#2a9d6c'); assert.notStrictEqual(c.track, c.panel, 'el riel se distingue de la tarjeta');
+    // la casa del resultado es decorativa: oculta a lectores de pantalla y dentro del bloque
+    assert.strictEqual(await p.evaluate(() => { const c = document.querySelector('.casa'), v = document.getElementById('verdict').getBoundingClientRect(), r = c.getBoundingClientRect(); return c.getAttribute('aria-hidden') === 'true' && r.bottom <= v.bottom + 1 && r.height > 50; }), true);
     await p.context().close();
   }
 });
